@@ -45,6 +45,7 @@
         const playerTurnElement = document.getElementById('playerTurn');
         const cells = [];
         let currentPlayer = 'X';
+        let marksCount = { X: 0, O: 0 };
 
         function createBoard() {
             for (let i = 0; i < 9; i++) {
@@ -60,8 +61,10 @@
             const index = cells.indexOf(event.target);
             if (index !== -1 && !cells[index].innerText) {
                 cells[index].innerText = currentPlayer;
+                marksCount[currentPlayer]++;
                 checkWin();
                 switchPlayer();
+                clearOldMark();
             }
         }
 
@@ -88,14 +91,22 @@
                     return;
                 }
             }
+        }
 
-            if (cells.every(cell => cell.innerText)) {
-                alert('It\'s a draw!');
-                resetBoard();
+        function clearOldMark() {
+            if (marksCount[currentPlayer] > 3) {
+                for (let i = 0; i < cells.length; i++) {
+                    if (cells[i].innerText === currentPlayer) {
+                        cells[i].innerText = '';
+                        marksCount[currentPlayer]--;
+                        break;
+                    }
+                }
             }
         }
 
         function resetBoard() {
+            marksCount = { X: 0, O: 0 };
             cells.forEach(cell => cell.innerText = '');
             currentPlayer = 'X';
             playerTurnElement.innerText = `Player ${currentPlayer}'s Turn`;
