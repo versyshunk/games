@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            cursor: pointer;
+        }
+        .player-turn {
+            margin-top: 20px;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="board" id="board">
+        <!-- Cells will be generated dynamically -->
+    </div>
+    <div class="player-turn" id="playerTurn">Player X's Turn</div>
+
+    <script>
+        const board = document.getElementById('board');
+        const playerTurnElement = document.getElementById('playerTurn');
+        const cells = [];
+        let currentPlayer = 'X';
+
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+                cells.push(cell);
+            }
+        }
+
+        function handleCellClick(event) {
+            const index = cells.indexOf(event.target);
+            if (index !== -1 && !cells[index].innerText) {
+                cells[index].innerText = currentPlayer;
+                checkWin();
+                switchPlayer();
+            }
+        }
+
+        function switchPlayer() {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            playerTurnElement.innerText = `Player ${currentPlayer}'s Turn`;
+        }
+
+        function checkWin() {
+            const winningCombinations = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (const combo of winningCombinations) {
+                if (
+                    cells[combo[0]].innerText &&
+                    cells[combo[0]].innerText === cells[combo[1]].innerText &&
+                    cells[combo[1]].innerText === cells[combo[2]].innerText
+                ) {
+                    alert(`Player ${cells[combo[0]].innerText} wins!`);
+                    resetBoard();
+                    return;
+                }
+            }
+
+            if (cells.every(cell => cell.innerText)) {
+                alert('It\'s a draw!');
+                resetBoard();
+            }
+        }
+
+        function resetBoard() {
+            cells.forEach(cell => cell.innerText = '');
+            currentPlayer = 'X';
+            playerTurnElement.innerText = `Player ${currentPlayer}'s Turn`;
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
